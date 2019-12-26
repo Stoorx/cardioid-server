@@ -1,0 +1,100 @@
+<html>
+
+<head>
+    <title>Express</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+</head>
+
+<body>
+
+
+<canvas align="center" id="myChart" width="1000" height="400"></canvas>
+
+
+</body>
+<script>
+    function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    // create initial empty chart
+    let ctx_live = document.getElementById("myChart");
+    let myChart = new Chart(ctx_live, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                borderWidth: 1,
+                borderColor: 'green',
+                label: 'liveCount',
+                fill: false
+            }]
+        },
+        options: {
+            responsive: false,
+            title: {
+                display: false
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                    }
+                }],
+                xAxes: [
+                    {
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 128,
+                            maxTicksLimit: 1000
+                        }
+                    }
+                ]
+            },
+            elements: {
+                point: {
+                    radius: 0
+                }
+            }
+        },
+        tooltips: {
+            mode: false,
+            callbacks: {
+                title: function () {
+                },
+                label: function () {
+                }
+            }
+        }
+    });
+
+    for (let i = 0; i <= 1024; i++) {
+        myChart.data.labels.push(i);
+    }
+
+    setInterval(
+        async () => {
+            let json = await fetch("http://localhost:8081/poll?r=" + Math.random())
+                .then(async (response) => {
+                    return response.json()
+                });
+            let old = myChart.data.datasets[0].data;
+            let newArr = [...old];
+            for (let i = 0; i < json.length; i++)
+                newArr = newArr.concat(json[i].data);
+
+            myChart.data.datasets[0].data = newArr;
+            if (myChart.data.datasets[0].data.length > 1024)
+                myChart.data.datasets[0].data.length = 0;
+            myChart.update();
+        },
+        1000
+    )
+</script>
+</html>

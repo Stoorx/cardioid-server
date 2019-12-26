@@ -1,0 +1,17 @@
+{
+  "name": "cardioid-server",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./startup.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "esm": "^3.2.25",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1",
+    "body-parser": "latest"
+  }
+}
